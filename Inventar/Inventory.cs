@@ -2,9 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Threading;
 using System;
 
@@ -52,15 +50,15 @@ namespace Inventar
                 {
                     return;
                 }
-                Tuple<short, short> pos = GetGridPosition();
+                Tuple<short, short> pos = GetGridPosition(e);
                 Move(origin, pos.Item1, pos.Item2);
             };
             return grid;
         }
 
-        private Tuple<short, short> GetGridPosition()
+        private Tuple<short, short> GetGridPosition(DragEventArgs e)
         {
-            var point = Mouse.GetPosition(null);
+            var point = e.GetPosition(grid);
             int row = 0;
             int col = 0;
             double accumulatedHeight = 0.0;
@@ -89,11 +87,11 @@ namespace Inventar
         public bool IsPlaceable(InventoryItem item, short x, short y, InventoryActor ignoreEl = null)
         {
             if (x < 0 || x + item.width > _width || y < 0 || y + item.height > _height) return false;
-            int[] match = new int[] { x, y };
+            List<int[]> positions = InventoryActor.GetItemPoitions(item,x,y);
             foreach(InventoryActor i in _inv)
             {
                 if (i.Equals(ignoreEl)) continue;
-                if (i.GetPositions().Exists(var => var[0] == x && var[1] == y)) return false;
+                if (i.GetPositions().Exists(pos => positions.Exists(itemPos => itemPos[0] == pos[0] && itemPos[1] == pos[1]))) return false;
             }
             return true;
         }
@@ -108,78 +106,23 @@ namespace Inventar
             return true;
         }
 
-        public bool AddItem(InventoryItem item, short x, short y)
+        public bool AddItem(InventoryItem item, short x, short y, Color color)
         {
             if (!IsPlaceable(item, x, y)) return false;
-            InventoryActor temp = new InventoryActor(item, x, y);
+            InventoryActor temp = new InventoryActor(item, x, y, color);
             _inv.Add(temp);
             grid.Children.Add(temp.rect);
             return true;
         }
-    }
 
-    class InventoryActor
-    {
-
-        public InventoryItem parent;
-        private short x;
-        private short y;
-        public short X
+        public void Save(SQLite.SQLiteConnection db)
         {
-            get
+            List<SavedItem> items = new List<SavedItem>();
+            foreach(InventoryActor item in _inv)
             {
-                return x;
+                items.Add(new SavedItem() { Name = item.parent.name, Type = item.parent.type, Height = item.parent.height, Width = item.parent.width, X = item.X, Y = item.Y, R = item.Color.R, B = item.Color.B, G = item.Color.G });
             }
-            set
-            {
-                x = value;
-                Grid.SetColumn(rect, x);
-            }
-        }
-        public short Y
-        {
-            get
-            {
-                return y;
-            }
-            set
-            {
-                y = value;
-                Grid.SetColumn(rect, x);
-            }
-        }
-        public Rectangle rect;
-
-        public InventoryActor(InventoryItem item, short x, short y)
-        {
-            this.parent = item;
-            rect = new Rectangle();
-            rect.Fill = new SolidColorBrush(Color.FromRgb(0, 111, 111));
-            this.X = x;
-            this.Y = y;
-            Grid.SetColumnSpan(rect, item.width);
-            Grid.SetRowSpan(rect, item.height);
-            rect.MouseMove += (sender, e) =>
-            {
-                Rectangle r = sender as Rectangle;
-                if (r != null && e.LeftButton == MouseButtonState.Pressed)
-                {
-                    DragDrop.DoDragDrop(r,this,DragDropEffects.Move);
-                }
-            };
-        }
-
-        public List<int[]> GetPositions()
-        {
-            List<int[]> ret = new List<int[]>();
-            for (int i = X; i < X + parent.width; i++)
-            {
-                for (int z = Y; z < Y + parent.height; z++)
-                {
-                    ret.Add(new int[] { X, z });
-                }
-            }
-            return ret;
+            db.InsertAll(items);
         }
     }
 }
