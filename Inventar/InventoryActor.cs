@@ -12,9 +12,11 @@ namespace Inventar
         private Color DEFAULT_COLOR = Color.FromRgb(0, 111, 111);
         private Color currentColor;
 
-        public InventoryItem parent;
+        public Item parent;
         private short x;
         private short y;
+        public short width { get; }
+        public short height { get; }
         public short X
         {
             get
@@ -54,32 +56,41 @@ namespace Inventar
 
         public Rectangle rect;
 
-        public InventoryActor(InventoryItem item, short x, short y, Color color = new Color())
+        public InventoryActor(Item item, short x, short y, short width, short height, Color color = new Color())
         {
-            if (color.Equals(new Color())) color = DEFAULT_COLOR;
-            this.parent = item;
             rect = new Rectangle();
+            if (color.Equals(new Color()))
+            {
+                color = DEFAULT_COLOR;
+            }
+            this.parent = item;
             Color = color;
             this.X = x;
             this.Y = y;
-            Grid.SetColumnSpan(rect, item.width);
-            Grid.SetRowSpan(rect, item.height);
+            this.width = width;
+            this.height = height;
+        }
+
+        public void Init()
+        {
+            Grid.SetColumnSpan(rect, width);
+            Grid.SetRowSpan(rect, height);
             rect.MouseMove += (sender, e) =>
             {
                 Rectangle r = sender as Rectangle;
                 if (r != null && e.LeftButton == MouseButtonState.Pressed)
                 {
-                    DragDrop.DoDragDrop(r,this,DragDropEffects.Move);
+                    DragDrop.DoDragDrop(r, this, DragDropEffects.Move);
                 }
             };
         }
 
         public List<int[]> GetPositions()
         {
-            return GetItemPoitions(parent, X, Y);
+            return GetItemPoitions(this, X, Y);
         }
 
-        public static List<int[]> GetItemPoitions(InventoryItem item, int x, int y)
+        public static List<int[]> GetItemPoitions(InventoryActor item, int x, int y)
         {
             List<int[]> ret = new List<int[]>();
             for (int i = x; i < x + item.width; i++)

@@ -1,6 +1,6 @@
 ﻿namespace Inventar
 {
-    class Item
+    abstract class Item
     {
         public string name { get; set; }
         public ItemType type { get; set; }

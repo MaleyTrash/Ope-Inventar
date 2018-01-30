@@ -84,7 +84,7 @@ namespace Inventar
             return new Tuple<short, short>((short)col, (short)row);
         }
 
-        public bool IsPlaceable(InventoryItem item, short x, short y, InventoryActor ignoreEl = null)
+        public bool IsPlaceable(InventoryActor item, short x, short y, InventoryActor ignoreEl = null)
         {
             if (x < 0 || x + item.width > _width || y < 0 || y + item.height > _height) return false;
             List<int[]> positions = InventoryActor.GetItemPoitions(item,x,y);
@@ -100,16 +100,17 @@ namespace Inventar
         {
             InventoryActor found = _inv.Find(i => i.Equals(item));
             if (found == null) return false;
-            if (!IsPlaceable(item.parent, x, y, item)) return false;
+            if (!IsPlaceable(item, x, y, item)) return false;
             found.X = x;
             found.Y = y;
             return true;
         }
 
-        public bool AddItem(InventoryItem item, short x, short y, Color color)
+        public bool AddItem(Item item, short x, short y, short width, short height, Color color)
         {
-            if (!IsPlaceable(item, x, y)) return false;
-            InventoryActor temp = new InventoryActor(item, x, y, color);
+            InventoryActor temp = new InventoryActor(item, x, y, width, height, color);
+            if (!IsPlaceable(temp, x, y)) return false;
+            temp.Init();
             _inv.Add(temp);
             grid.Children.Add(temp.rect);
             return true;
@@ -120,8 +121,9 @@ namespace Inventar
             List<SavedItem> items = new List<SavedItem>();
             foreach(InventoryActor item in _inv)
             {
-                items.Add(new SavedItem() { Name = item.parent.name, Type = item.parent.type, Height = item.parent.height, Width = item.parent.width, X = item.X, Y = item.Y, R = item.Color.R, B = item.Color.B, G = item.Color.G });
+                items.Add(new SavedItem() { Name = item.parent.name, Type = item.parent.type, Height = item.height, Width = item.width, X = item.X, Y = item.Y, R = item.Color.R, B = item.Color.B, G = item.Color.G });
             }
+            Debug.WriteLine(items.Count);
             db.InsertAll(items);
         }
     }

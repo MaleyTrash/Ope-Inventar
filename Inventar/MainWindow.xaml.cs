@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -21,38 +22,28 @@ namespace Inventar
     /// </summary>
     public partial class MainWindow : Window
     {
+        Inventory _inv = new Inventory(10, 10);
+        SQLiteConnection _db = new SQLiteConnection("db.db");
         public MainWindow()
         {
             InitializeComponent();
-            SQLiteConnection db = new SQLiteConnection("db.db");
-            db.CreateTable<SavedItem>();
+            _db.CreateTable<SavedItem>();
 
-            Inventory inv = new Inventory(10,10);
-            InventoryItem itm = new InventoryItem("XD", ItemType.Ammo, 3, 3);
-            InventoryItem itm2 = new InventoryItem("XD", ItemType.Ammo, 4, 4);
-            Debug.WriteLine(inv.AddItem(itm, 0, 0, Color.FromRgb(200,0,0)));
-            Debug.WriteLine(inv.AddItem(itm2, 5, 0, Color.FromRgb(0,200,0)));
-            XD.Children.Add(inv.grid);
+            List<SavedItem> items = new List<SavedItem>(_db.Table<SavedItem>().AsEnumerable<SavedItem>());
+
+            foreach (SavedItem item in items)
+            {
+                //item.Width, item.Height
+                Item temp = new Zbran(item.Name);
+                _inv.AddItem(temp, item.X, item.Y, item.Width, item.Height, Color.FromRgb(item.R, item.G, item.B));
+            }
+            XD.Children.Add(_inv.grid);
+            _inv.Save(_db);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
+            _inv.Save(_db);
         }
-    }
-
-    class SavedItem
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public ItemType Type { get; set; }
-        public short Width { get; set; }
-        public short Height { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public byte R { get; set; }
-        public byte G { get; set; }
-        public byte B { get; set; }
     }
 }

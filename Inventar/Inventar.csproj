@@ -71,6 +71,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Brneni.cs" />
+    <Compile Include="MeleeZbran.cs" />
+    <Compile Include="Naboje.cs" />
+    <Compile Include="RangedZbran.cs" />
+    <Compile Include="SavedItem.cs" />
+    <Compile Include="Zbran.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
