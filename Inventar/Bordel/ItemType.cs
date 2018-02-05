@@ -2,6 +2,6 @@
 {
     enum ItemType
     {
-        Weapon, Armor, Potion, Food, Ammo
+        Weapon, Armor, Potion, Food, Ammo, None
     }
 }

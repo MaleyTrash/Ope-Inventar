@@ -71,12 +71,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Brneni.cs" />
-    <Compile Include="MeleeZbran.cs" />
-    <Compile Include="Naboje.cs" />
-    <Compile Include="RangedZbran.cs" />
+    <Compile Include="Bordel\Brneni.cs" />
+    <Compile Include="Bordel\MagicEffect.cs" />
+    <Compile Include="Bordel\MagicItem.cs" />
+    <Compile Include="Bordel\MeleeZbran.cs" />
+    <Compile Include="Bordel\Naboje.cs" />
+    <Compile Include="Bordel\RangedZbran.cs" />
+    <Compile Include="Bordel\RegularItem.cs" />
     <Compile Include="SavedItem.cs" />
-    <Compile Include="Zbran.cs" />
+    <Compile Include="Bordel\Zbran.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -88,8 +91,8 @@
     <Compile Include="Inventory.cs" />
     <Compile Include="InventoryActor.cs" />
     <Compile Include="InventoryItem.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="ItemType.cs" />
+    <Compile Include="Bordel\Item.cs" />
+    <Compile Include="Bordel\ItemType.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -113,6 +116,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Bordel\ClassDiagram.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

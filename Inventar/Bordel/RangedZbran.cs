@@ -2,7 +2,7 @@
 {
     class RangedZbran : Zbran
     {
-        public RangedZbran(string name, int damage, int range) : base(name, damage, range)
+        public RangedZbran(Item item, int damage, int range) : base(item, damage, range)
         {
         }
 

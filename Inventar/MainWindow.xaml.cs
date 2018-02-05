@@ -31,10 +31,12 @@ namespace Inventar
 
             List<SavedItem> items = new List<SavedItem>(_db.Table<SavedItem>().AsEnumerable<SavedItem>());
 
+            Item mec = new Excaliboar();
+
             foreach (SavedItem item in items)
             {
                 //item.Width, item.Height
-                Item temp = new Zbran(item.Name);
+                Item temp = new MeleeZbran(new RegularItem("XD"), 10);
                 _inv.AddItem(temp, item.X, item.Y, item.Width, item.Height, Color.FromRgb(item.R, item.G, item.B));
             }
             XD.Children.Add(_inv.grid);

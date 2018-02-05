@@ -2,7 +2,7 @@
 {
     class Naboje : Item
     {
-        public Naboje(string name) : base(name, ItemType.Ammo)
+        public Naboje(Item item) : base(item.name, ItemType.Ammo)
         {
         }
     }
